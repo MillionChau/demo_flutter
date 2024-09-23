@@ -185,7 +185,55 @@ void main(List<String> args) async {
   print('Server listening on port ${server.port}');
 }
 ```
-2. Debug và kiểm thử
+2. Debug và kiểm thử với postman
+3. Thêm Middleware xử lí CORS cho backend
+- **CORS là gì?** CORS (Cross-Origin Resource Sharing) là một cơ chế bảo mật được các trình duyệt web sử dụng để ngăn chặn các wen gửi yêu cầu đến một domain khác với domain của trang web hiện tại. Điều này nhằm bảo vệ người dùng khỏi các cuộc tấn công CSRF (Cross-Site Request Forgery) và các mối đe doạ bảo mật khác.
+- **Vì sao cần thêm CORS middleware?** khi frontend (Flutter Web) gửi yêu cầu HTTP đến backend trên một domain khác, trình duyệt web sẽ chặn yêu cầu do vi phạm chính sách cùng nguồn gốc (Same-Origin Policy). Các yêu cầu từ Flutter Web(chạy trên localhost:8081) đến server backend (chạy trên localhost:8080) sẽ bị chặn nếu không xử lý đúng các header CORS. trình duyệt sẽ gửi một yêu cầu OPTIONS (Preflight Request) để kiểm tả xem server có cho phép không. Nếu server không phản hồi đúng, yêu cầu chính sẽ không được gửi.
+- **Giải pháp:** Thêm middlewware xử lí CORS và server backend để xử lí các yêu cầu OPTIONS bằng cách trả về các header CORS cần thiết. Thêm các header CORS vào tất cả các phản hồi từ server để trình duyệt cho phép giao tiếp giữa frontend và backend. 
+
+- Cập nhật mã nguồn hàm main của servers
+```dart
+void main(List<String> args) async {
+  // Lắng nghe tất cả địa chỉ IPv4
+  final ip = InternetAddress.anyIPv4;
+
+  final corsHeader = createMiddleware(
+    requestHandler: (req) {
+      if(req.method == 'OPTIONS') {
+        return Response.ok(
+          '',
+          headers: {
+            'Access-Control-Alow-Origin': '*',// Cho phép mọi nguồn truy cập(môi trường trong dev). Trong môi trường production ta thay * bằng domain cụ thể 
+            'Access-Control-Alow-Methods': 'GET,  POST, PUT, DELETE, PATCH, HEAD',
+            'Access-Control-Alow-Headers': 'Content-Type,Authorization',
+          }
+        );
+      }
+      return null; //Tiếp tục xử lý các yêu cầu khác
+    },
+    responseHandler: (res) {
+      return res.change(headers:  {
+        'Access-Control-Alow-Origin': '*',// Cho phép mọi nguồn truy cập(môi trường trong dev). Trong môi trường production ta thay * bằng domain cụ thể 
+            'Access-Control-Alow-Methods': 'GET,  POST, PUT, DELETE, PATCH, HEAD',
+            'Access-Control-Alow-Headers': 'Content-Type,Authorization',
+      });
+    }
+  );
+  // Cấu hình một pipeline để logs các request và middleware
+  final handler = Pipeline()
+    .addMiddleware(corsHeader)
+    .addMiddleware(logRequests())
+    .addHandler(_router.call);
+
+  // Để chạy trên các container, chúng ta sử dụng biến mội trường POST,
+  // Nếu biến môi trường không được thiết lập nó sẽ sử dụng giá trị từ biến
+  final port = int.parse(Platform.environment['PORT'] ?? '8080');
+
+  // Khởi chạy server tại cổng chỉ định
+  final server = await serve(handler, ip, port);
+  print('Server đang chạy tại http://${server.address.host}:${server.port}');
+}
+```
 
 ### Bước 7: Phát triển frontend và kiểm thử
     
