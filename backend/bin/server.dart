@@ -93,15 +93,42 @@ Future<Response> _submitHandler(Request req) async{
 }
 
 void main(List<String> args) async {
-  // Use any available host or container IP (usually `0.0.0.0`).
+  // Lắng nghe tất cả địa chỉ IPv4
   final ip = InternetAddress.anyIPv4;
 
-  // Configure a pipeline that logs requests.
-  final handler =
-      Pipeline().addMiddleware(logRequests()).addHandler(_router.call);
+  final corsHeader = createMiddleware(
+    requestHandler: (req) {
+      if(req.method == 'OPTIONS') {
+        return Response.ok(
+          '',
+          headers: {
+            'Access-Control-Alow-Origin': '*',// Cho phép mọi nguồn truy cập(môi trường trong dev). Trong môi trường production ta thay * bằng domain cụ thể 
+            'Access-Control-Alow-Methods': 'GET,  POST, PUT, DELETE, PATCH, HEAD',
+            'Access-Control-Alow-Headers': 'Content-Type,Authorization',
+          }
+        );
+      }
+      return null; //Tiếp tục xử lý các yêu cầu khác
+    },
+    responseHandler: (res) {
+      return res.change(headers:  {
+        'Access-Control-Alow-Origin': '*',// Cho phép mọi nguồn truy cập(môi trường trong dev). Trong môi trường production ta thay * bằng domain cụ thể 
+            'Access-Control-Alow-Methods': 'GET,  POST, PUT, DELETE, PATCH, HEAD',
+            'Access-Control-Alow-Headers': 'Content-Type,Authorization',
+      });
+    }
+  );
+  // Cấu hình một pipeline để logs các request và middleware
+  final handler = Pipeline()
+    .addMiddleware(corsHeader)
+    .addMiddleware(logRequests())
+    .addHandler(_router.call);
 
-  // For running in containers, we respect the PORT environment variable.
+  // Để chạy trên các container, chúng ta sử dụng biến mội trường POST,
+  // Nếu biến môi trường không được thiết lập nó sẽ sử dụng giá trị từ biến
   final port = int.parse(Platform.environment['PORT'] ?? '8080');
+
+  // Khởi chạy server tại cổng chỉ định
   final server = await serve(handler, ip, port);
-  print('Server listening on port ${server.port}');
+  print('Server đang chạy tại http://${server.address.host}:${server.port}');
 }
