@@ -236,6 +236,10 @@ void main(List<String> args) async {
 ```
 
 ### Bước 7: Phát triển frontend và kiểm thử
-    
+1. Chỉnh sửa mã nguồn frontend
+- Mở tệp `frontend/lib/main.dart` và thay thế nội dung bằng mã sau:
+```dart
+
+```
 
 
