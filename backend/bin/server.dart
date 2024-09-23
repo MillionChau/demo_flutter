@@ -13,7 +13,7 @@ final _router = Router(notFoundHandler: _notFoundHandler)
   ..post('/api/v1/submit', _submitHandler);
 
 // Header mặc định cho dữ liệu trả về dưới dạng JSON
-final _headers = {'ContentType': 'application/json'};
+final _headers = {'Content-Type': 'application/json'};
 
 // Xử lí các yêu cầu các đường dẫn không được định nghĩa (404 Not Found).
 Response _notFoundHandler(Request req){
@@ -26,9 +26,9 @@ Response _notFoundHandler(Request req){
 
 // [req]: Đối tượng yêu cầu từ client
 
-// Trả về: Một đối tượng `Response` với mã trạng thái 200 dưới dạng JSON
+// Trả về: Một đối tượng Response với mã trạng thái 200 dưới dạng JSON
 Response _rootHandler(Request req) {
-  // Constructor `ok` của Response có statusCode là 200
+  // Constructor ok của Response có statusCode là 200
   return Response.ok(
     json.encode({'message': 'Hello, World!'}),
     headers: _headers,
@@ -60,7 +60,7 @@ Future<Response> _submitHandler(Request req) async{
 
     // Tạo phản hồi chào mừng
     if (name != null && name.isNotEmpty) {
-      final response = {'message': 'Chào mừng ${name}!'};
+      final response = {'message': 'Chào mừng ${name} đến với Website này!'};
     
       // Trả về phản hồi với statusCode 200 và nội dung JSON
       return Response.ok(
@@ -80,7 +80,7 @@ Future<Response> _submitHandler(Request req) async{
     
     
   } catch(e) {
-    // 
+    // Xử lý lỗi
     final response = {
       'message': 'Yêu cầu không hợp lệ. Mã lỗi ${e.toString()}'
     };
@@ -102,9 +102,9 @@ void main(List<String> args) async {
         return Response.ok(
           '',
           headers: {
-            'Access-Control-Alow-Origin': '*',// Cho phép mọi nguồn truy cập(môi trường trong dev). Trong môi trường production ta thay * bằng domain cụ thể 
-            'Access-Control-Alow-Methods': 'GET,  POST, PUT, DELETE, PATCH, HEAD',
-            'Access-Control-Alow-Headers': 'Content-Type,Authorization',
+            'Access-Control-Allow-Origin': '*',// Cho phép mọi nguồn truy cập(môi trường trong dev). Trong môi trường production ta thay * bằng domain cụ thể 
+            'Access-Control-Allow-Methods': 'GET,  POST, PUT, DELETE, PATCH, HEAD',
+            'Access-Control-Allow-Headers': 'Content-Type,Authorization',
           }
         );
       }
@@ -112,9 +112,9 @@ void main(List<String> args) async {
     },
     responseHandler: (res) {
       return res.change(headers:  {
-        'Access-Control-Alow-Origin': '*',// Cho phép mọi nguồn truy cập(môi trường trong dev). Trong môi trường production ta thay * bằng domain cụ thể 
-            'Access-Control-Alow-Methods': 'GET,  POST, PUT, DELETE, PATCH, HEAD',
-            'Access-Control-Alow-Headers': 'Content-Type,Authorization',
+        'Access-Control-Allow-Origin': '*',// Cho phép mọi nguồn truy cập(môi trường trong dev). Trong môi trường production ta thay * bằng domain cụ thể 
+            'Access-Control-Allow-Methods': 'GET,  POST, PUT, DELETE, PATCH, HEAD',
+            'Access-Control-Allow-Headers': 'Content-Type,Authorization',
       });
     }
   );
@@ -128,7 +128,7 @@ void main(List<String> args) async {
   // Nếu biến môi trường không được thiết lập nó sẽ sử dụng giá trị từ biến
   final port = int.parse(Platform.environment['PORT'] ?? '8080');
 
-  // Khởi chạy server tại cổng chỉ định
+  // Khởi chạy server tại cổng chỉ định 
   final server = await serve(handler, ip, port);
   print('Server đang chạy tại http://${server.address.host}:${server.port}');
 }
