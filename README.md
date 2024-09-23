@@ -9,9 +9,9 @@ Quá trình biên dịch và phát hành ứng dụng web từ dart và Framewor
 ## Mục tiêu
 - Hiểu và áp dụng được các khái niệm cơ bản về ứng dụng web động, ứng dụng đa nền tảng.
 - sử dụng Flutter framework  để tạo giao diện cơ bản cho một ứng dụng.
-- Sử dụng dảt và thư viện shelf, shelf_router để tạo server ssown giản xử lí các yêu cầu HTTP theo chuẩn RESTful API
-- Tích hợp giao diện với logic xử lí phản hồi từ server, thực hiện thao tác gửi dữ liệu từ client lên sẻver thông qua HTTP POST.
-- Kiểm thử đơn giản với Postman để kiểm tra phản hồi từ server với các yêu cầ get và pót bao gồm cả trường hợp hợp lệ và không hợp lệ
+- Sử dụng dart và thư viện shelf, shelf_router để tạo server đơn giản xử lí các yêu cầu HTTP theo chuẩn RESTful API
+- Tích hợp giao diện với logic xử lí phản hồi từ server, thực hiện thao tác gửi dữ liệu từ client lên server thông qua HTTP POST.
+- Kiểm thử đơn giản với Postman để kiểm tra phản hồi từ server với các yêu cầ get và post bao gồm cả trường hợp hợp lệ và không hợp lệ
 
 ## Cấu trúc thư mục
 Để tiện cho việc quản lí và có thể đẩy lên github, chúng ta sẽ cài đặt backend và frontend trên cùng một thư mục dự án.
